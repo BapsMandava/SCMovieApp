@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--    color of tool bar   -->
+    <color name="colorPrimary">@android:color/white</color>
+    <!--    color of notification bar   -->
+    <color name="colorPrimaryDark">#00574B</color>
+
+    <color name="colorAccent">#D81B60</color>
+
+    <color name="toolBarTextColor">#25282B</color>
+
+    <color name="backgroundColor">#dddddd</color>
+
+    <color name="repoTextColor">#52575C</color>
+</resources>
