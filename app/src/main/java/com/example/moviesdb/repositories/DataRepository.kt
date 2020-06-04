@@ -1,51 +1,54 @@
-package com.example.dbstest.repositories
+package com.example.moviesdb.repositories
 
 import android.content.Context
 import android.widget.Toast
-import com.example.dbstest.models.DataDetailRepo
-import com.example.dbstest.models.DataRepo
-import com.example.dbstest.network.Api
-import com.example.dbstest.network.ApiClient
-import com.example.dbstest.network.ServiceGenerator
 import com.example.dbstest.utils.ConnectivityUtil
+import com.example.moviesdb.models.MovieDataResult
+import com.example.moviesdb.models.MovieListResult
+import com.example.moviesdb.network.ApiClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import io.reactivex.Observable
 
 
-class DataRepository(private val context: Context) {
+class MoviesRepository(private val context: Context) {
 
     private var dataRepoApiClient: ApiClient = ApiClient()
 
-    fun getAllDataRepos(): Observable<List<DataRepo>> {
+    fun getAllDataRepos(apiKey: String,
+                        name: String,
+                        type: String,
+                        pageNo: Int): Observable<MovieListResult> {
         val hasConnection = ConnectivityUtil.isNetworkAvailable(context)
-        var observableFromApi: Observable<List<DataRepo>>? = null
+        var observableFromApi: Observable<MovieListResult>? = null
         if (hasConnection) {
-            observableFromApi = getDataReposFromApi()
+            observableFromApi = getDataReposFromApi(apiKey,name,type,pageNo)
+        }
+
+        return Observable.concatArrayEager(observableFromApi)
+    }
+
+    fun getTitleDetails(apiKey: String,id:String): Observable<MovieDataResult> {
+        val hasConnection = ConnectivityUtil.isNetworkAvailable(context)
+        var observableFromApi:  Observable<MovieDataResult>? = null
+        if (hasConnection) {
+            observableFromApi = getMovieDetailsFromApi(apiKey,id)
         }
 
         return Observable.concatArrayEager(observableFromApi)
     }
 
 
-
-    fun getTitleDetails(id: Int): Observable<DataDetailRepo> {
-        val hasConnection = ConnectivityUtil.isNetworkAvailable(context)
-        var observableFromApi:  Observable<DataDetailRepo>? = null
-        if (hasConnection) {
-            observableFromApi = getTitleDetailsFromApi(id)
-        }
-
-        return Observable.concatArrayEager(observableFromApi)
+    private fun getDataReposFromApi(apiKey: String,
+                                    name: String,
+                                    type: String,
+                                    pageNo: Int): Observable<MovieListResult> {
+        return dataRepoApiClient.getAllMoviesRepo(apiKey,name,type,pageNo)
     }
 
-    private fun getDataReposFromApi(): Observable<List<DataRepo>> {
-        return dataRepoApiClient.getDataRepos()
-    }
-
-    private fun getTitleDetailsFromApi(id:Int): Observable<DataDetailRepo> {
-        return dataRepoApiClient.getTitleDetailsRepos(id)
+    private fun getMovieDetailsFromApi(apiKey: String,id:String): Observable<MovieDataResult> {
+        return dataRepoApiClient.getMovieDetailsRepos(apiKey,id)
     }
 
 }

@@ -1,4 +1,4 @@
-package com.example.dbstest.network
+package com.example.moviesdb.network
 
 import android.content.Context
 import android.util.Log

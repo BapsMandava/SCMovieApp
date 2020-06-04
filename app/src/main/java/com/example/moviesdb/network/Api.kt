@@ -1,17 +1,24 @@
-package com.example.dbstest.network
+package com.example.moviesdb.network
 
-import com.example.dbstest.models.DataDetailRepo
-import com.example.dbstest.models.DataRepo
 import com.example.dbstest.utils.Constants
+import com.example.moviesdb.models.MovieDataResult
+import com.example.moviesdb.models.MovieListResult
 import io.reactivex.Observable
 import retrofit2.Call
 import retrofit2.http.*
 
 
 interface Api {
-        @GET(Constants.GET_ARTICLE)
-        fun getDataRepos():  Observable<List<DataRepo>>
+        @GET("?")
+        fun getAllMovies(
+                @Query("apikey") apiKey: String = Constants.API_KEY,
+                @Query("s") name: String,
+                @Query("type") type: String,
+                @Query("page") pageNo: Int
+        ): Observable<MovieListResult>
 
-        @GET(Constants.GET_ARTICLE+Constants.GET_ARTICLE_ID)
-        fun getTitleDataRepos(@Path("id") id:Int):  Observable<DataDetailRepo>
+
+        @GET("?")
+        fun getTitleDataRepos(@Query("apikey") apiKey: String = Constants.API_KEY,
+                              @Query("i") i: String ):  Observable<MovieDataResult>
 }

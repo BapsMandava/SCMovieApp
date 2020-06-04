@@ -1,4 +1,4 @@
-package com.example.dbstest.utils
+package com.example.moviesdb.utils
 
 import java.text.SimpleDateFormat
 import java.util.*

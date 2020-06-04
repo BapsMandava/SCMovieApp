@@ -1,14 +1,12 @@
-package com.example.dbstest.viewmodels
+package com.example.moviesdb.viewmodels
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.dbstest.models.DataDetailRepo
-
-
-import com.example.dbstest.models.DataRepo
-import com.example.dbstest.repositories.DataRepository
+import com.example.moviesdb.models.MovieDataResult
+import com.example.moviesdb.models.MovieListResult
+import com.example.moviesdb.repositories.MoviesRepository
 import com.example.moviesdb.viewmodels.SingleLiveEvent
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -16,17 +14,16 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
 
-class DataListViewModel(application: Application) : AndroidViewModel(application) {
+class MovieListViewModel(application: Application) : AndroidViewModel(application) {
     // The ViewModel maintains a reference to the repository to get data.
-    private val repository: DataRepository
-    var data: MutableLiveData<List<DataRepo>> = MutableLiveData()
-    var dataDetails: MutableLiveData<DataDetailRepo> = MutableLiveData()
-    var errorMessage: MutableLiveData<String> = MutableLiveData()
+    private val repository: MoviesRepository
+    var data: MutableLiveData<MovieListResult> = MutableLiveData()
     private val mDisposables = CompositeDisposable()
     private val status = SingleLiveEvent<String>()
+    var dataDetails: MutableLiveData<MovieDataResult> = MutableLiveData()
 
     init {
-        repository = DataRepository(application.baseContext)
+        repository = MoviesRepository(application.baseContext)
     }
 
     fun getStatus(): LiveData<String> {
@@ -34,8 +31,11 @@ class DataListViewModel(application: Application) : AndroidViewModel(application
     }
 
 
-    fun getRepos(): LiveData<List<DataRepo>> {
-        val observable: Observable<List<DataRepo>> = repository.getAllDataRepos()
+    fun getRepos(apiKey: String,
+                 name: String,
+                 type: String,
+                 pageNo: Int): LiveData<MovieListResult> {
+        val observable: Observable<MovieListResult> = repository.getAllDataRepos(apiKey,name,type,pageNo)
         val result = observable.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ result ->
@@ -50,8 +50,8 @@ class DataListViewModel(application: Application) : AndroidViewModel(application
         return data
     }
 
-    fun getSelectedData(id:Int):LiveData<DataDetailRepo>  {
-        val observable: Observable<DataDetailRepo>? = repository.getTitleDetails(id)
+    fun getSelectedMovieData(apiKey: String,id:String):LiveData<MovieDataResult>  {
+        val observable: Observable<MovieDataResult>? = repository.getTitleDetails(apiKey,id)
         val result = observable?.subscribeOn(Schedulers.io())?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribe({ result ->
                 dataDetails.postValue(result)
